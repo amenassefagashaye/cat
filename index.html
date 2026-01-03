@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>አሰፋ ዲጂታል ቢንጎ ጨዋታ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Audio Elements -->
+    <audio id="callAudio" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-bell-notification-933.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="winAudio" preload="auto">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Triple Border Container -->
+    <div class="border-container">
+        <div class="main-container">
+            <!-- Color Borders -->
+            <div class="page-border green"></div>
+            <div class="page-border yellow"></div>
+            <div class="page-border red"></div>
+
+            <!-- Page 0: Welcome -->
+            <div class="page-container active" id="page0">
+                <button class="help-circle-btn" onclick="showPage(5)">?</button>
+                
+                <div class="page-content">
+                    <div class="welcome-content">
+                        <div class="game-title amharic-text">አሰፋ ዲጂታል ቢንጎ ጨዋታ</div>
+                        <div style="font-size: 14px; color: #ffd700; margin-bottom: 30px; text-align: center;">
+                            Assefa Gashaye Birhanie Digital Bingo Game (AGBDBG)
+                        </div>
+                        <button class="start-btn-circle" onclick="showPage(1)">
+                            <div style="font-size: 24px;">🎮</div>
+                        </button>
+                        <div class="developer-text amharic-text">አሰፋ ጋሻዬ ብርሃንነህ</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 1: Board Selection -->
+            <div class="page-container" id="page1">
+                <div class="page-content">
+                    <div class="page-header amharic-text">የቦርድ ዓይነት ይምረጡ</div>
+                    <div class="board-selection-container">
+                        <div class="board-type-grid" id="boardTypeGrid"></div>
+                    </div>
+                </div>
+                
+                <div class="fixed-controls">
+                    <button class="control-btn btn-secondary" onclick="showPage(0)">ተመለስ</button>
+                    <button class="control-btn btn-success" id="nextBtn">ቀጥል</button>
+                </div>
+            </div>
+
+            <!-- Page 2: Registration -->
+            <div class="page-container" id="page2">
+                <div class="page-content">
+                    <!-- Registration Top Bar -->
+                    <div class="registration-top-bar">
+                        <button class="top-bar-btn win-btn" onclick="showPotentialWin()">🏆</button>
+                        <div class="registration-title amharic-text">ምዝገባ</div>
+                        <button class="top-bar-btn members-btn" onclick="showMembers()">👥</button>
+                    </div>
+                    
+                    <div class="registration-form">
+                        <div class="form-scroll">
+                            <div class="form-group">
+                                <label for="playerName" class="amharic-text">ስም</label>
+                                <input type="text" id="playerName" class="form-control" placeholder="ሙሉ ስም">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="playerPhone" class="amharic-text">ስልክ</label>
+                                <input type="tel" id="playerPhone" class="form-control" placeholder="0918203416">
+                            </div>
+                            
+                            <div class="payment-section">
+                                <select id="paymentAmount" class="payment-select" onchange="processPayment()">
+                                    <option value="">ክፍያ መጠን ይምረጡ</option>
+                                    <option value="25">25 ብር</option>
+                                    <option value="50">50 ብር</option>
+                                    <option value="100">100 ብር</option>
+                                    <option value="200">200 ብር</option>
+                                    <option value="500">500 ብር</option>
+                                    <option value="1000">1000 ብር</option>
+                                    <option value="2000">2000 ብር</option>
+                                    <option value="5000">5000 ብር</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="playerStake" class="amharic-text">ውርርድ መጠን</label>
+                                <select id="playerStake" class="form-control" onchange="updatePotentialWin()">
+                                    <option value="">ይምረጡ</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="boardSelect" class="amharic-text">የቦርድ ቁጥር</label>
+                                <select id="boardSelect" class="form-control">
+                                    <option value="">1-100</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fixed-controls">
+                    <button class="control-btn btn-secondary" onclick="showPage(1)">ተመለስ</button>
+                    <button class="control-btn btn-success" id="confirmBtn">ጀምር</button>
+                </div>
+            </div>
+
+            <!-- Page 3: Game Board -->
+            <div class="page-container" id="page3">
+                <div class="game-header">
+                    <div class="game-title-bar amharic-text" id="gameHeader"></div>
+                </div>
+                
+                <div class="game-board-container">
+                    <div id="gameBoard"></div>
+                </div>
+                
+                <!-- Circular Call Button -->
+                <div class="circular-call-container">
+                    <button class="circular-call-btn" id="circularCallBtn">
+                        <div id="currentNumberDisplay"></div>
+                    </button>
+                    <div class="called-numbers-bar" id="calledNumbersBar">
+                        <!-- Numbers will be added here -->
+                    </div>
+                </div>
+                
+                <!-- Game Controls -->
+                <div class="game-controls">
+                    <button class="control-btn btn-secondary" onclick="showPage(2)">ተመለስ</button>
+                    <button class="control-btn btn-info" onclick="showPage(4)">ፋይናንስ</button>
+                    <button class="control-btn btn-success" onclick="announceWin()" id="announceBtn">አሸናፊ ናለሁ!</button>
+                </div>
+            </div>
+
+            <!-- Page 4: Finance -->
+            <div class="page-container" id="page4">
+                <div class="page-content">
+                    <div class="page-header amharic-text">ፋይናንስ</div>
+                    
+                    <div class="finance-container">
+                        <div class="finance-form">
+                            <div class="form-group">
+                                <label class="amharic-text">ጠቅላላ ክፍያ</label>
+                                <input type="text" id="totalPayment" class="form-control" readonly value="0 ብር">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="amharic-text">ጠቅላላ ሽልማት</label>
+                                <input type="text" id="totalWon" class="form-control" readonly value="0 ብር">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="amharic-text">አሁን ያለው</label>
+                                <input type="text" id="currentBalance" class="form-control" readonly value="0 ብር">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="withdrawAccount" class="amharic-text">የአካውንት ቁጥር</label>
+                                <input type="text" id="withdrawAccount" class="form-control" placeholder="1000062264911">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="withdrawAmount" class="amharic-text">ለመውጣት</label>
+                                <input type="text" id="withdrawAmount" class="form-control" readonly value="0 ብር">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fixed-controls">
+                    <button class="control-btn btn-secondary" onclick="showPage(3)">ተመለስ</button>
+                    <button class="control-btn btn-success" onclick="processWithdrawal()">አውጣ</button>
+                </div>
+            </div>
+
+            <!-- Page 5: Detailed Help Information -->
+            <div class="page-container" id="page5">
+                <div class="page-content">
+                    <div class="page-header amharic-text">እርዳታ / Help</div>
+                    
+                    <!-- Help Navigation -->
+                    <div class="help-nav">
+                        <button class="help-nav-btn amharic-text active" onclick="showHelpTab('general')">አጠቃላይ</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('rules')">ደንቦች</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('75ball')">75-ቢንጎ</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('90ball')">90-ቢንጎ</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('30ball')">30-ቢንጎ</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('50ball')">50-ቢንጎ</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('pattern')">ንድፍ ቢንጎ</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('coverall')">ሙሉ ቤት</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('winning')">የማሸነፍ ሂደት</button>
+                        <button class="help-nav-btn amharic-text" onclick="showHelpTab('payment')">ክፍያ ስርዓት</button>
+                    </div>
+                    
+                    <div class="help-content">
+                        <!-- General Tab -->
+                        <div class="help-tab-content active" id="help-general">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">ቢንጎ ምንድን ነው? / What is Bingo?</div>
+                                <div class="help-text amharic-text">
+                                    ቢንጎ የአጋጣሚ ቁጥሮችን የሚጠቀም ጨዋታ ነው። ቁጥሮች በዘፈቀደ ይጠራሉ፣ ተጫዋቾች ደግሞ በመሳቸው ሰንጠረዥ ላይ ተጠርተው ያዩትን ምልክት ያደርጋሉ። አንድ ንድፍ ሙሉ ሲሆን "ቢንጎ" በማለት ይጠራሉ።
+                                </div>
+                                <div class="help-text">
+                                    Bingo is a game of chance where numbers are randomly drawn and players mark them on their cards. The first to complete a pattern calls "Bingo" and wins.
+                                </div>
+                            </div>
+                            
+                            <div class="help-section">
+                                <div class="help-title amharic-text">የጨዋታ አወቃቀር / Game Structure</div>
+                                <div class="help-text amharic-text">
+                                    1. የጨዋታ ገጽ 6: የተለያዩ ቦርድ ዓይነቶች<br>
+                                    2. ምዝገባ ገጽ: የተጫዋች መረጃ እና ክፍያ<br>
+                                    3. የጨዋታ ቦርድ: የቁጥር ምልክት እና አሸናፊነት<br>
+                                    4. ፋይናንስ ገጽ: ሚዛን እና የማውጣት ሂደት<br>
+                                    5. እርዳታ ገጽ: ዝርዝር መመሪያ በአማርኛ እና እንግሊዝኛ
+                                </div>
+                                <div class="help-text">
+                                    1. Game Page 6: Different board types<br>
+                                    2. Registration Page: Player info and payment<br>
+                                    3. Game Board: Number marking and winning<br>
+                                    4. Finance Page: Balance and withdrawal<br>
+                                    5. Help Page: Detailed instructions in Amharic and English
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Rules Tab -->
+                        <div class="help-tab-content" id="help-rules">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">አጠቃላይ ደንቦች / General Rules</div>
+                                <div class="help-text amharic-text">
+                                    1. እያንዳንዱ ተጫዋች የቢንጎ ሰንጠረዥ ይገዛል<br>
+                                    2. ቁጥሮች በዘፈቀደ ይጠራሉ (ሁለ 7 ሰከንድ)<br>
+                                    3. የተጠራው ቁጥር በሰንጠረዥህ ላይ ካለ ምልክት አድርግ<br>
+                                    4. ንድፍ ሙሉ ከሆነ "አሸናፊ ናለሁ!" ቁልፉን ይንኩ<br>
+                                    5. ሽልማት ይቀበላሉ
+                                </div>
+                                <div class="help-text">
+                                    1. Each player buys a bingo card<br>
+                                    2. Numbers are randomly called (every 7 seconds)<br>
+                                    3. Mark called numbers on your card<br>
+                                    4. Click "I'm Winner!" button when pattern completes<br>
+                                    5. Receive your prize
+                                </div>
+                            </div>
+                            
+                            <div class="help-section">
+                                <div class="help-title amharic-text">የቁጥር ጥሪ አመጣጥ / Calling Logic</div>
+                                <div class="help-text amharic-text">
+                                    • ቁጥሮች በራስ-ሰር ይጠራሉ (ሁለ 7 ሰከንድ)<br>
+                                    • ሠንጠረዡ በላይኛው ክብ ቁልፍ ላይ ይታያል<br>
+                                    • ቁጥሩ ከክብ ቁልፍ ወደ አራት ማዕዘን አሞሌ ይገናኛል<br>
+                                    • ቁጥሮች ከቀኝ ወደ ግራ ይንቀሳቀሳሉ<br>
+                                    • ከ8 ቁጥሮች በላይ ሲሆኑ የጥንታዊው ተወግዷል
+                                </div>
+                                <div class="help-text">
+                                    • Numbers auto-call every 7 seconds<br>
+                                    • Current number appears on circular button<br>
+                                    • Number moves from circular button to bar<br>
+                                    • Numbers scroll right to left<br>
+                                    • Oldest numbers disappear after 8 calls
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 75-Ball Tab -->
+                        <div class="help-tab-content" id="help-75ball">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">75-ቢንጎ / 75-Ball Bingo</div>
+                                <div class="help-text amharic-text">
+                                    <strong>የጨዋታ ስርዓት:</strong> 5×5 ፍርግርግ (BINGO ፊደሎች)<br>
+                                    <strong>ቁጥር ክልል:</strong> 1-75<br>
+                                    <strong>የትርጉም ንድፎች:</strong><br>
+                                    • ረድፍ - 5 ቁጥሮች በአንድ ረድፍ<br>
+                                    • አምድ - 5 ቁጥሮች በአንድ አምድ<br>
+                                    • ዲያግናል - 5 ቁጥሮች በዲያግናል<br>
+                                    • አራት ማእዘኖች - 4 ማእዘኖች ምልክት ያድርጉ<br>
+                                    • ሙሉ ቤት - ሁሉንም ቁጥሮች ምልክት ያድርጉ<br>
+                                    <strong>መሃል ሕዋስ:</strong> ነፃ ቦታ - በማሸነፍ ጊዜ ብቻ ይንኩ
+                                </div>
+                                <div class="help-text">
+                                    <strong>Game System:</strong> 5×5 grid (BINGO letters)<br>
+                                    <strong>Number Range:</strong> 1-75<br>
+                                    <strong>Winning Patterns:</strong><br>
+                                    • Row - 5 numbers in one row<br>
+                                    • Column - 5 numbers in one column<br>
+                                    • Diagonal - 5 numbers diagonally<br>
+                                    • Four Corners - Mark all 4 corners<br>
+                                    • Full House - Mark all numbers<br>
+                                    <strong>Center Cell:</strong> Free space - Click only when winning
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 90-Ball Tab -->
+                        <div class="help-tab-content" id="help-90ball">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">90-ቢንጎ / 90-Ball Bingo</div>
+                                <div class="help-text amharic-text">
+                                    <strong>የጨዋታ ስርዓት:</strong> 9×3 ፍርግርግ<br>
+                                    <strong>ቁጥር ክልል:</strong> 1-90<br>
+                                    <strong>የትርጉም ንድፎች:</strong><br>
+                                    • አንድ ረድፍ - 5 ቁጥሮች በአንድ ረድፍ<br>
+                                    • ሁለት ረድፍ - 10 ቁጥሮች በሁለት ረድፍ<br>
+                                    • ሙሉ ቤት - 15 ቁጥሮች ሁሉም<br>
+                                    <strong>መሃል ሕዋስ:</strong> በመጫወት ወቅት ቁጥር፣ በማሸነፍ ጊዜ አሸናፊ ቁልፍ
+                                </div>
+                                <div class="help-text">
+                                    <strong>Game System:</strong> 9×3 grid<br>
+                                    <strong>Number Range:</strong> 1-90<br>
+                                    <strong>Winning Patterns:</strong><br>
+                                    • One Line - 5 numbers in one row<br>
+                                    • Two Lines - 10 numbers in two rows<br>
+                                    • Full House - All 15 numbers<br>
+                                    <strong>Center Cell:</strong> Number during play, winner key when winning
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 30-Ball Tab -->
+                        <div class="help-tab-content" id="help-30ball">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">30-ቢንጎ / 30-Ball Bingo</div>
+                                <div class="help-text amharic-text">
+                                    <strong>የጨዋታ ስርዓት:</strong> 3×3 ፍርግርግ<br>
+                                    <strong>ቁጥር ክልል:</strong> 1-30<br>
+                                    <strong>የትርጉም ንድፍ:</strong><br>
+                                    • ሙሉ ቤት - ሁሉንም 9 ቁጥሮች ምልክት ያድርጉ<br>
+                                    <strong>መሃል ሕዋስ:</strong> በመጫወት ወቅት ቁጥር፣ በማሸነፍ ጊዜ አሸናፊ ቁልፍ
+                                </div>
+                                <div class="help-text">
+                                    <strong>Game System:</strong> 3×3 grid<br>
+                                    <strong>Number Range:</strong> 1-30<br>
+                                    <strong>Winning Pattern:</br>
+                                    • Full House - Mark all 9 numbers<br>
+                                    <strong>Center Cell:</strong> Number during play, winner key when winning
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 50-Ball Tab -->
+                        <div class="help-tab-content" id="help-50ball">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">50-ቢንጎ / 50-Ball Bingo</div>
+                                <div class="help-text amharic-text">
+                                    <strong>የጨዋታ ስርዓት:</strong> 5×5 ፍርግርግ<br>
+                                    <strong>ቁጥር ክልል:</strong> 1-50<br>
+                                    <strong>የትርጉም ንድፎች:</strong><br>
+                                    • ረድፍ - 5 ቁጥሮች በአንድ ረድፍ<br>
+                                    • አምድ - 5 ቁጥሮች በአንድ አምድ<br>
+                                    • ዲያግናል - 5 ቁጥሮች በዲያግናል<br>
+                                    • አራት ማእዘኖች - 4 ማእዘኖች ምልክት ያድርጉ<br>
+                                    <strong>መሃል ሕዋስ:</strong> በመጫወት ወቅት ቁጥር፣ በማሸነፍ ጊዜ አሸናፊ ቁልፍ
+                                </div>
+                                <div class="help-text">
+                                    <strong>Game System:</strong> 5×5 grid<br>
+                                    <strong>Number Range:</strong> 1-50<br>
+                                    <strong>Winning Patterns:</strong><br>
+                                    • Row - 5 numbers in one row<br>
+                                    • Column - 5 numbers in one column<br>
+                                    • Diagonal - 5 numbers diagonally<br>
+                                    • Four Corners - Mark all 4 corners<br>
+                                    <strong>Center Cell:</strong> Number during play, winner key when winning
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Pattern Bingo Tab -->
+                        <div class="help-tab-content" id="help-pattern">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">ንድፍ ቢንጎ / Pattern Bingo</div>
+                                <div class="help-text amharic-text">
+                                    <strong>የጨዋታ ስርዓት:</strong> 5×5 ፍርግርግ<br>
+                                    <strong>ቁጥር ክልል:</strong> 1-75<br>
+                                    <strong>የትርጉም ንድፎች:</strong><br>
+                                    • X ንድፍ - X ቅርጽ ያለው ንድፍ<br>
+                                    • አውራ ቀለበት - ውጫዊ ክበብ ንድፍ<br>
+                                    • ማህተም - 4 ካሬዎች ንድፍ<br>
+                                    • ዲያምንድ - ዲያምንድ ቅርጽ ያለው ንድፍ<br>
+                                    <strong>መሃል ሕዋስ:</strong> ነፃ ቦታ - በማሸነፍ ጊዜ ብቻ ይንኩ
+                                </div>
+                                <div class="help-text">
+                                    <strong>Game System:</strong> 5×5 grid<br>
+                                    <strong>Number Range:</strong> 1-75<br>
+                                    <strong>Winning Patterns:</strong><br>
+                                    • X Pattern - X-shaped pattern<br>
+                                    • Frame - Outer frame pattern<br>
+                                    • Postage Stamp - 4 squares pattern<br>
+                                    • Small Diamond - Diamond-shaped pattern<br>
+                                    <strong>Center Cell:</strong> Free space - Click only when winning
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Coverall Tab -->
+                        <div class="help-tab-content" id="help-coverall">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">ሙሉ ቤት / Coverall Bingo</div>
+                                <div class="help-text amharic-text">
+                                    <strong>የጨዋታ ስርዓት:</strong> 9×5 ፍርግርግ<br>
+                                    <strong>ቁጥር ክልል:</strong> 1-90 (45 ቁጥሮች ብቻ)<br>
+                                    <strong>የትርጉም ንድፍ:</strong><br>
+                                    • ሙሉ ቦርድ - ሁሉንም 45 ቁጥሮች ምልክት ያድርጉ<br>
+                                    <strong>መሃል ሕዋስ:</strong> በመጫወት ወቅት ቁጥር፣ በማሸነፍ ጊዜ አሸናፊ ቁልፍ
+                                </div>
+                                <div class="help-text">
+                                    <strong>Game System:</strong> 9×5 grid<br>
+                                    <strong>Number Range:</strong> 1-90 (only 45 numbers)<br>
+                                    <strong>Winning Pattern:</strong><br>
+                                    • Full Board - Mark all 45 numbers<br>
+                                    <strong>Center Cell:</strong> Number during play, winner key when winning
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Winning Process Tab -->
+                        <div class="help-tab-content" id="help-winning">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">የማሸነፍ ሂደት / Winning Process</div>
+                                <div class="help-text amharic-text">
+                                    1. ቁጥሮችን ምልክት ያድርጉ<br>
+                                    2. ንድፍ ሙሉ ሲሆን "አሸናፊ ናለሁ!" ቁልፉን ይንኩ<br>
+                                    3. የማሸነፍ ማሳወቂያ ይታያል<br>
+                                    4. ሽልማት በፋይናንስ ገጽ ላይ ይጨምራል<br>
+                                    5. ሽልማት በአካውንት ማውጣት ይችላሉ
+                                </div>
+                                <div class="help-text">
+                                    1. Mark numbers on your card<br>
+                                    2. Click "I'm Winner!" button when pattern completes<br>
+                                    3. Winner notification appears<br>
+                                    4. Prize added to finance page<br>
+                                    5. Withdraw prize to your account
+                                </div>
+                            </div>
+                            
+                            <div class="help-section">
+                                <div class="help-title amharic-text">የማሸነፍ አይነቶች / Winning Types</div>
+                                <div class="help-text amharic-text">
+                                    • ረድፍ - 5 ቁጥሮች በአንድ ረድፍ<br>
+                                    • አምድ - 5 ቁጥሮች በአንድ አምድ<br>
+                                    • ዲያግናል - 5 ቁጥሮች በዲያግናል<br>
+                                    • አራት ማእዘኖች - 4 ማእዘኖች<br>
+                                    • ሙሉ ቤት - ሁሉም ቁጥሮች<br>
+                                    • X ንድፍ - X ቅርጽ<br>
+                                    • አውራ ቀለበት - ውጫዊ ክበብ<br>
+                                    • ሙሉ ቦርድ - ሁሉም 45 ቁጥሮች
+                                </div>
+                                <div class="help-text">
+                                    • Row - 5 numbers in one row<br>
+                                    • Column - 5 numbers in one column<br>
+                                    • Diagonal - 5 numbers diagonally<br>
+                                    • Four Corners - 4 corners<br>
+                                    • Full House - All numbers<br>
+                                    • X Pattern - X shape<br>
+                                    • Frame - Outer frame<br>
+                                    • Full Board - All 45 numbers
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment System Tab -->
+                        <div class="help-tab-content" id="help-payment">
+                            <div class="help-section">
+                                <div class="help-title amharic-text">የክፍያ ስርዓት / Payment System</div>
+                                <div class="help-text amharic-text">
+                                    <strong>የክፍያ አማራጮች:</strong><br>
+                                    • 25 ብር - መሰረታዊ ክፍያ<br>
+                                    • 50 ብር - መካከለኛ ክፍያ<br>
+                                    • 100 ብር - መደበኛ ክፍያ<br>
+                                    • 200 ብር - ከፍተኛ ክፍያ<br>
+                                    • 500 ብር - ብርቅ ክፍያ<br>
+                                    • 1000 ብር - ልዩ ክፍያ<br>
+                                    • 2000 ብር - ከፍተኛ ልዩ ክፍያ<br>
+                                    • 5000 ብር - በጣም ከፍተኛ<br>
+                                    <strong>ማሳሰቢያ:</strong> 3% አገልግሎት ክፍያ ይቀንሳል
+                                </div>
+                                <div class="help-text">
+                                    <strong>Payment Options:</strong><br>
+                                    • 25 Birr - Basic payment<br>
+                                    • 50 Birr - Medium payment<br>
+                                    • 100 Birr - Regular payment<br>
+                                    • 200 Birr - High payment<br>
+                                    • 500 Birr - Premium payment<br>
+                                    • 1000 Birr - Special payment<br>
+                                    • 2000 Birr - High special payment<br>
+                                    • 5000 Birr - Very high<br>
+                                    <strong>Note:</strong> 3% service charge is deducted
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fixed-controls">
+                    <button class="control-btn btn-success" onclick="showPage(0)">ተመለስ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members Modal -->
+    <div class="members-modal" id="membersModal">
+        <div class="modal-content">
+            <div class="modal-header amharic-text">ተጫዋቾች (90)</div>
+            
+            <table class="members-table">
+                <thead>
+                    <tr>
+                        <th class="amharic-text">ተ.ቁ.</th>
+                        <th class="amharic-text">ስም</th>
+                        <th class="amharic-text">ስልክ</th>
+                        <th class="amharic-text">ክፍያ</th>
+                        <th class="amharic-text">ውርርድ</th>
+                        <th class="amharic-text">ሚዛን</th>
+                    </tr>
+                </thead>
+                <tbody id="membersList">
+                    <!-- Members will be added here -->
+                </tbody>
+            </table>
+            
+            <div class="fixed-controls" style="position: relative; margin-top: 15px; background: transparent; border: none;">
+                <button class="control-btn btn-success" onclick="closeModal('membersModal')">እሺ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Potential Win Modal -->
+    <div class="potential-win-modal" id="potentialWinModal">
+        <div class="modal-content">
+            <div class="modal-header amharic-text">የማሸነፍ እድል</div>
+            
+            <table class="winning-table">
+                <thead>
+                    <tr>
+                        <th class="amharic-text">ውርርድ መጠን</th>
+                        <th class="amharic-text">ሽልማት</th>
+                    </tr>
+                </thead>
+                <tbody id="winningTableBody">
+                    <!-- Winning amounts will be added here -->
+                </tbody>
+            </table>
+            
+            <div style="margin-top: 15px; padding: 10px; background: rgba(255, 215, 0, 0.1); border-radius: 8px; border: 1px solid #ffd700;">
+                <div class="amharic-text" style="text-align: center; font-size: 14px; color: #28a745; margin-top: 5px; font-weight: bold;">
+                    ሊሸነፍ የሚችል ሽልማት: <span id="currentWinDisplay">0</span> ብር
+                </div>
+                <div class="amharic-text" style="text-align: center; font-size: 11px; color: #ffd700; margin-top: 5px;">
+                    ማሳሰቢያ: 3% አገልግሎት ክፍያ ይቀንሳል
+                </div>
+            </div>
+            
+            <div class="fixed-controls" style="position: relative; margin-top: 15px; background: transparent; border: none;">
+                <button class="control-btn btn-success" onclick="closeModal('potentialWinModal')">እሺ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div class="notification" id="notification">
+        <div id="notificationText" class="amharic-text"></div>
+        <div class="fixed-controls" style="position: relative; margin-top: 15px; background: transparent; border: none;">
+            <button class="control-btn btn-secondary" onclick="hideNotification()">እሺ</button>
+            <button class="control-btn btn-success" id="continueBtn" onclick="continueWithIncomplete()">ቀጥል</button>
+        </div>
+    </div>
+
+    <!-- Winner Popup -->
+    <div class="winner-notification" id="winnerNotification">
+        <div style="font-size: 32px; margin-bottom: 15px;">🎉 ቢንጎ! 🎉</div>
+        <div class="winner-name amharic-text" id="winnerName"></div>
+        <div class="winning-pattern amharic-text" id="winPattern"></div>
+        <div class="win-amount amharic-text" id="displayWinAmount">0 ብር</div>
+        <div style="margin: 15px 0; color: #ffd700;" class="amharic-text">አረጋግጧል ✓</div>
+        <div class="fixed-controls" style="position: relative; bottom: 0; left: 0; right: 0; margin-top: 20px; background: transparent; border: none;">
+            <button class="control-btn btn-success" onclick="continueGame()">ቀጥር</button>
+            <button class="control-btn btn-info" onclick="showPage(4)">አውጣ</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
